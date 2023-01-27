@@ -23,15 +23,15 @@ model lists {
 
 model listsItems {
   id     Int   @id @default(autoincrement())
-  listId Int
-  itemId Int
+  listId Int   
+  itemId Int    
   items  items @relation(fields: [itemId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   lists  lists @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model sessions {
   id     Int    @id @default(autoincrement())
-  userId Int
+  userId Int    @unique
   token  String @unique
   users  users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

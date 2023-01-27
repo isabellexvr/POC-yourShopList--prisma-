@@ -1,30 +1,47 @@
-import { UserEntity, SessionsArray } from './../protocols/usersProtocols';
-import { QueryResult } from "pg";
-import { connection } from "../database/db";
+import { UserEntity, Session } from './../protocols/usersProtocols';
+import prisma from '../database/db';
 
-async function getUserByEmail(email: string): Promise<QueryResult<UserEntity>> {
-
-    const user = await connection.query("SELECT * FROM users WHERE email=$1", [email]);
-
-    return user
+function getUserByEmail(email: string): Promise<UserEntity | null> {
+    //upsert
+    return prisma.users.findFirst({
+        where: { email: email }
+    })
 }
 
-function createSession(userId: number, token: string): Promise<QueryResult<SessionsArray>> {
+function createSession(userId: number, token: string): Promise<Session> {
 
-    return connection.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [userId, token])
+    // return connection.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [userId, token])
+    return prisma.sessions.create({
+        data: {
+            userId: userId,
+            token: token
+        }
+    })
 }
 
-function findSession(userId:number): Promise<QueryResult<SessionsArray>>{
+function findSession(userId: number): Promise<Session | null> {
 
-    return connection.query(`SELECT * FROM sessions WHERE "userId"=$1`,[userId])
+    return prisma.sessions.findFirst({
+        where: {
+            userId: userId
+        }
+    })
 }
 
-function createUser(name:string, email: string, password: string): Promise<QueryResult<UserEntity>>{
-    return connection.query("INSERT INTO users (name, email, password) VALUES ($1,$2,$3);", [name, email, password]);
+function createUser(name: string, email: string, password: string): Promise<UserEntity> {
+    return prisma.users.create({
+        data: {
+            name: name,
+            email: email,
+            password: password
+        }
+    })
+    //  return connection.query("INSERT INTO users (name, email, password) VALUES ($1,$2,$3);", [name, email, password]);
 }
 
-function deleteSession(userId: number): Promise<QueryResult>{
-    return connection.query(`DELETE FROM sessions WHERE "userId"=$1`, [userId])
+function deleteSession(userId: number): Promise<Session | null> {
+    return prisma.sessions.delete({ where: { userId: userId } });
+    //return connection.query(`DELETE FROM sessions WHERE "userId"=$1`, [userId])
 }
 
 const userRepository = {

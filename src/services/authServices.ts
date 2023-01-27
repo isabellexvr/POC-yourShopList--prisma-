@@ -23,8 +23,8 @@ async function signIn(data: SignIn): Promise<Session> {
 
 async function checkUserExistence(email: string): Promise<UserEntity> {
     const user = await userRepository.getUserByEmail(email)
-    if (user.rows.length <= 0) throw invalidEmailError()
-    return user.rows[0]
+    if (!user) throw invalidEmailError()
+    return user
 }
 
 async function validatePassword(insertedPassword: string, password: string): Promise<boolean> {

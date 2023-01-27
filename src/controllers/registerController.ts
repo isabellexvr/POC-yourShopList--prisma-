@@ -10,8 +10,8 @@ export async function registerNewUser(req: Request, res: Response) {
     const hashedPassword: string = brcrypt.hashSync(password, 10);
 
     try {
-        const isThereAnyUser: QueryResult<UserEntity> = await userRepository.getUserByEmail(email);
-        if (isThereAnyUser.rows.length > 0) throw userAlreadyExistsError();
+        const isThereAnyUser:UserEntity | null = await userRepository.getUserByEmail(email);
+        if (isThereAnyUser) throw userAlreadyExistsError();
 
         await userRepository.createUser(name, email, hashedPassword)
 

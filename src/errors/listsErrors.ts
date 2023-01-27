@@ -7,3 +7,7 @@ export function listNameConflictError(): ServerError{
 export function listNotFoundError(): ServerError{
     return { name: "no_lists_found", message: "list not found or not attached to this user" };
 }
+
+export function itemNotFoundError(): ServerError{
+    return {name: "no_items_found", message: "items not found"}
+}

@@ -20,12 +20,12 @@ export async function userSignIn(req: Request, res: Response) {
 
 export async function logout(req: Request, res: Response) {
 
-    const userId = res.locals.userId
+    const userId = res.locals.userId as number
 
     try {
         const session = await authServices.checkSessionExistence(userId);
 
-        if (session.rows.length <= 0) throw { name: "non_existent_session_error", message: "this session already doesn't exists" };
+        if (session) throw { name: "non_existent_session_error", message: "this session already doesn't exists" };
 
         await userRepository.deleteSession(userId);
 
