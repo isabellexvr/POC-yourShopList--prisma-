@@ -1,4 +1,3 @@
-import { QueryResult } from 'pg';
 import { List, UserLists } from './../protocols/listsProtocols';
 import { Request, Response } from "express"
 import listsRepository from '../repositories/listsRepository';
@@ -11,12 +10,12 @@ async function createList(req: Request, res: Response) {
     try {
         await listsServices.checkListExistence(listName, userId);
         const createList = await itemsRepository.insertList(listName, userId);
-        res.status(201).send({ listId: createList.rows[0].id, message: "Lista criada com sucesso." });
+        res.status(201).send({ listId: createList, message: "Lista criada com sucesso." });
     } catch (error: any) {
 
         if (error.name === "list_name_error") res.status(409).send(error.message);
         if (error.name === "no_lists_found") res.status(404).send(error.message);
-        
+
         res.sendStatus(500);
         console.log(error);
     }
@@ -49,9 +48,9 @@ async function findAllListsByUser(req: Request, res: Response) {
     const userId = res.locals.userId;
 
     try {
-        const lists: QueryResult<UserLists[]> = await listsRepository.getAllListsByUserId(userId)
+        const lists = await listsRepository.getAllListsByUserId(userId)
 
-        res.status(200).send(lists.rows)
+        res.status(200).send(lists)
 
     } catch (error: any) {
         res.sendStatus(500)
@@ -68,9 +67,9 @@ async function getListById(req: Request, res: Response) {
     try {
         await listsServices.checkIfListBelongsToUser(userId, Number(listId));
         
-        const list: QueryResult<UserLists> = await listsRepository.getList(Number(listId), userId);
+        const list= await listsRepository.getList(Number(listId), userId);
 
-        res.status(200).send(list.rows);
+        res.status(200).send(list);
     } catch (error: any) {
         if (error.name === "no_lists_found") res.status(404).send(error.message)
         res.sendStatus(500)

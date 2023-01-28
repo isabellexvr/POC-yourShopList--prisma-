@@ -59,50 +59,50 @@ function getAllListsByUserId(userId: number) {
 }
 
 function getList(listId: number, userId: number) {
-/*     return connection.query(`
-    SELECT 
-        u."name" as owner,
-        l."listName",
-        ARRAY_TO_JSON(
-            ARRAY_AGG(
-                JSONB_BUILD_OBJECT(
-                    'item', i."itemName" 
+    /*     return connection.query(`
+        SELECT 
+            u."name" as owner,
+            l."listName",
+            ARRAY_TO_JSON(
+                ARRAY_AGG(
+                    JSONB_BUILD_OBJECT(
+                        'item', i."itemName" 
+                    ) 
                 ) 
-            ) 
-        ) AS items
-    FROM lists l 
-    JOIN "listsItems" li 
-        ON l.id =li."listId" 
-    JOIN users u 
-        ON l."userId"=u.id
-    JOIN items i
-        ON i.id = li."itemId" 
-    WHERE l.id=$1 AND u.id=$2
-    GROUP BY u.id, l.id
-;
-`, [listId, userId]); */
-return prisma.lists.findFirst({
-    where: {
-        id: listId, userId: userId
-    },
-    select: {
-        listName: true,
-        listsItems: {
-            select: {
-                items: {
-                    select: {
-                        itemName: true
+            ) AS items
+        FROM lists l 
+        JOIN "listsItems" li 
+            ON l.id =li."listId" 
+        JOIN users u 
+            ON l."userId"=u.id
+        JOIN items i
+            ON i.id = li."itemId" 
+        WHERE l.id=$1 AND u.id=$2
+        GROUP BY u.id, l.id
+    ;
+    `, [listId, userId]); */
+    return prisma.lists.findFirst({
+        where: {
+            id: listId, userId: userId
+        },
+        select: {
+            listName: true,
+            listsItems: {
+                select: {
+                    items: {
+                        select: {
+                            itemName: true
+                        }
                     }
                 }
             }
         }
-    }
-})
+    })
 }
 
 function deleteList(listId: number, userId: number) {
-   // return connection.query(`DELETE FROM lists WHERE "listId"=$1 AND "userId"=$2;`, [Number(listId), userId]);
-   return prisma.lists.delete({where:{id: listId}})
+    // return connection.query(`DELETE FROM lists WHERE "listId"=$1 AND "userId"=$2;`, [Number(listId), userId]);
+    return prisma.lists.delete({ where: { id: listId } })
 
 }
 

@@ -11,7 +11,7 @@ async function signIn(data: SignIn): Promise<Session> {
 
     const userExistence = await checkUserExistence(email)
 
-    validatePassword(password, userExistence.password)
+    await validatePassword(password, userExistence.password)
 
     const token = await createNewSession(userExistence.id)
 

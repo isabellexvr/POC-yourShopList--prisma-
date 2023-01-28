@@ -5,34 +5,34 @@ import listsRepository from '../repositories/listsRepository';
 import itemsRepository from '../repositories/itemsRepository';
 
 
-async function checkListExistence(listName: string, userId: number): Promise<QueryResult<List>> {
+async function checkListExistence(listName: string, userId: number): Promise<List | null> {
 
-    const checkListName: QueryResult<List> = await listsRepository.finglistByUserId(listName, userId);
+    const checkListName: List | null = await listsRepository.finglistByUserId(listName, userId);
 
-    if (checkListName.rows.length > 0) throw listNameConflictError();
+    if (checkListName) throw listNameConflictError();
 
     return checkListName;
 }
 
 async function checkItemExistence(itemName: string): Promise<number> {
 
-    const checkItemName: QueryResult<ItemEntity> = await itemsRepository.findItemByName(itemName)
+    const checkItemName: ItemEntity | null = await itemsRepository.findItemByName(itemName)
 
-    if (checkItemName.rows.length > 0) return checkItemName.rows[0].id;
+    if (checkItemName) return checkItemName.id;
 
-    const newItem: QueryResult<ItemEntity> = await itemsRepository.insertNewItem(itemName)
+    const newItem: ItemEntity = await itemsRepository.insertNewItem(itemName)
 
-    return newItem.rows[0].id;
+    return newItem.id;
 
 }
 
 async function checkIfListBelongsToUser(userId: number, listId: number): Promise<number> {
 
-    const list: QueryResult<ListEntity> = await listsRepository.getListByListId(userId, listId);
+    const list: ListEntity | null = await listsRepository.getListByListId(userId, listId);
 
-    if (list.rows.length <= 0) throw listNotFoundError();
+    if (!list) throw listNotFoundError();
 
-    return list.rows[0].id;
+    return list.id;
 
 };
 
