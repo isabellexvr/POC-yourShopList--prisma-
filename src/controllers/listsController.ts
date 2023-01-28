@@ -13,8 +13,12 @@ async function createList(req: Request, res: Response) {
         res.status(201).send({ listId: createList, message: "Lista criada com sucesso." });
     } catch (error: any) {
 
-        if (error.name === "list_name_error") res.status(409).send(error.message);
-        if (error.name === "no_lists_found") res.status(404).send(error.message);
+        if (error.name === "list_name_error") {
+            return res.status(409).send(error.message)
+        };
+        if (error.name === "no_lists_found") {
+            return res.status(404).send(error.message);
+        }
 
         res.sendStatus(500);
         console.log(error);
@@ -66,8 +70,8 @@ async function getListById(req: Request, res: Response) {
 
     try {
         await listsServices.checkIfListBelongsToUser(userId, Number(listId));
-        
-        const list= await listsRepository.getList(Number(listId), userId);
+
+        const list = await listsRepository.getList(Number(listId), userId);
 
         res.status(200).send(list);
     } catch (error: any) {

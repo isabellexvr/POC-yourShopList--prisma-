@@ -1,6 +1,7 @@
 import { UserLists } from './../protocols/listsProtocols';
 import prisma from '../database/db';
 import { ListEntity, ListsItemsEntity, ItemEntity } from '../protocols/listsProtocols';
+import { bool } from 'joi';
 
 function finglistByUserId(listName: string, userId: number): Promise<ListEntity | null> {
     //return connection.query(`SELECT * FROM lists WHERE "listName"=$1 AND "userId"=$2;`, [listName, userId])
@@ -44,19 +45,16 @@ function getAllListsByUserId(userId: number) {
                     listName: true,
                     listsItems: {
                         select: {
-                            items: {
-                                select: {
-                                    itemName: true
-                                }
-                            }
+                            items: true
                         }
                     }
                 }
-            },
+            }
+        },
 
-        }
     })
-}
+    }
+
 
 function getList(listId: number, userId: number) {
     /*     return connection.query(`
