@@ -11,7 +11,10 @@ export async function userSignIn(req: Request, res: Response) {
     } catch (error: any) {
         if (error.name === "user_not_found_error" || error.name === "incorrect_password_error") {
             res.status(401).send(error.message)
-        } else {
+        }else if ( error.name === "not_found_session_error"){
+            res.status(404).send(error.message)
+        }
+        else {
             res.sendStatus(500)
             console.log(error)
         }

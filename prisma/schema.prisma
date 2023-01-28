@@ -31,8 +31,8 @@ model listsItems {
 
 model sessions {
   id     Int    @id @default(autoincrement())
-  userId Int    @unique
-  token  String @unique
+  userId Int    
+  token  String 
   users  users  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 

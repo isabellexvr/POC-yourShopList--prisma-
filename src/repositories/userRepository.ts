@@ -1,5 +1,6 @@
 import { UserEntity, Session } from './../protocols/usersProtocols';
 import prisma from '../database/db';
+import { sessionNotFoundError } from '../errors/signInErrors';
 
 function getUserByEmail(email: string): Promise<UserEntity | null> {
     //upsert
@@ -39,8 +40,12 @@ function createUser(name: string, email: string, password: string): Promise<User
     //  return connection.query("INSERT INTO users (name, email, password) VALUES ($1,$2,$3);", [name, email, password]);
 }
 
-function deleteSession(userId: number): Promise<Session | null> {
-    return prisma.sessions.delete({ where: { userId: userId } });
+async function deleteSession(userId: number): Promise<Session | null> {
+    const findSession = await prisma.sessions.findFirst({where: {userId}});
+    if(!findSession){
+        throw sessionNotFoundError()
+    }
+    return prisma.sessions.delete({ where: { id: findSession.id } });
     //return connection.query(`DELETE FROM sessions WHERE "userId"=$1`, [userId])
 }
 
